@@ -9,7 +9,7 @@ class Parking {
   }
 
   public async checkin (plate: string) {
-    const existingTickets = await this.repository.find({plate, checkingOut: {$exists: 0} })
+    const existingTickets = await this.repository.find({plate, checkoutAt: { $exists : false } })
     if (existingTickets.length > 0) {
       throw new Error("There's a pending ticket")
     }
@@ -21,7 +21,7 @@ class Parking {
     })
 
     return {
-      id: ticket.id,
+      id: ticket._id,
       time: ticket.checkoutAt ? formatDistance(ticket.checkoutAt, ticket.checkinAt, { addSuffix: false }) : undefined,
       paid: ticket.paid,
       left: !!ticket.checkoutAt,
@@ -55,7 +55,7 @@ class Parking {
     const ticketList = await this.repository.find({ plate });
     return ticketList.map((ticket) => {
       return {
-        id: ticket.id,
+        id: ticket._id,
         time: ticket.checkoutAt ? formatDistance(ticket.checkoutAt, ticket.checkinAt, { addSuffix: false }) : undefined,
         paid: ticket.paid,
         left: !!ticket.checkoutAt,

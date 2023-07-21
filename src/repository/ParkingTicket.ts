@@ -11,11 +11,11 @@ class ParkingTicketRepository {
   }
 
   public async find (query: FilterQuery<unknown>) {
-    return await ParkingTicket.find(query);
+    return await ParkingTicket.find(query).transform((res) => res.map((doc) => doc.toObject()));
   }
 
   public async save (ticket: unknown) {
-    return await new ParkingTicket(ticket).save();
+    return (await new ParkingTicket(ticket).save()).toObject();
   }
 
   public async update (ticket: {_id: ObjectId | string} ) {
